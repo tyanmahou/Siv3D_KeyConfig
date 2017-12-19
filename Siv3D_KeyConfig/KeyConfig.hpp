@@ -14,7 +14,7 @@ namespace s3dkc
 			None,		//通常時
 			IsSetting,	//セッティング中
 			OnChange,	//セット完了
-			Delete,		//設定の消去時
+			OnDelete,	//設定の消去時
 		};
 	private:
 		Key m_configStartKey, m_deleteKey;
