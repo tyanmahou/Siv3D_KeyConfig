@@ -11,7 +11,7 @@ namespace s3dkc
 	public:
 		enum class State
 		{
-			None,		//通常時
+			Normal,		//通常時
 			IsSetting,	//セッティング中
 			OnChange,	//セット完了
 			OnDelete,	//設定の消去時

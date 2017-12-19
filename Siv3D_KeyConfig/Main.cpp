@@ -104,7 +104,7 @@ void Main()
 
 		//auto state = config.update(key);
 
-		//if (state == KeyConfig::State::None ||
+		//if (state == KeyConfig::State::Normal ||
 		//	state == KeyConfig::State::IsSetting&&System::FrameCount() / 10 % 2 == 0)
 		//	PutText(s3dkc::GetKeyName(key)).at(Window::Center());
 
