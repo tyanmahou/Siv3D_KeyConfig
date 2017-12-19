@@ -13,7 +13,7 @@ namespace s3dkc
 		{
 			None,		//通常時
 			IsSetting,	//セッティング中
-			OnSet,		//セット完了
+			OnChange,	//セット完了
 			Delete,		//設定の消去時
 		};
 	private:

@@ -102,7 +102,6 @@ void Main()
 	{
 		//ClearPrint();
 
-
 		//auto state = config.update(key);
 
 		//if (state == KeyConfig::State::None ||
@@ -113,7 +112,7 @@ void Main()
 		//{
 		//	Println(L"キーを消去しました");
 		//}
-		//if (state == KeyConfig::State::OnSet)
+		//if (state == KeyConfig::State::OnChange)
 		//{
 		//	Println(L"キーを変更しました");
 		//}
