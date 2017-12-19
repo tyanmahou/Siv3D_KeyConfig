@@ -265,7 +265,7 @@ namespace s3dkc
 			if (ChangeKey(key))
 			{
 				m_isSetting = false;
-				return State::OnSet;
+				return State::OnChange;
 			}
 			return State::IsSetting;
 		}
@@ -279,11 +279,11 @@ namespace s3dkc
 			else if (m_deleteKey.clicked)//デリートキーを押せば設定消去
 			{
 				key = s3d::Key();
-				return State::Delete;
+				return State::OnDelete;
 			}
 
 		}
-		return State::None;
+		return State::Normal;
 	}
 
 

@@ -1,5 +1,5 @@
 #pragma once
-#include"KeyConfig.hpp"
+#include<Siv3D.hpp>
 namespace s3dkc
 {
 
@@ -133,7 +133,7 @@ namespace s3dkc
 
 
 
-		const Dictionary& getDictionary()const
+		const Dictionary& getKeys()const
 		{
 			return m_dictionary;
 		}

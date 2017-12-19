@@ -1,43 +1,43 @@
 ﻿
-# include <Siv3D.hpp>
 #include"KeyConfig.hpp"
 #include"KeyManager.hpp"
+
 class SampleKeyConfig :public s3dkc::KeyManager
 {
+private:
 	Font m_font;
 	s3dkc::KeyConfig m_config;
-	std::pair<String, uint32> m_currentSelect;
-public:
-	SampleKeyConfig(const FilePath& path) :
-		KeyManager(path)
-	{}
-	void init(const String& name, uint32 index)
+	std::pair<uint32, uint32> m_currentSelect;
+
+	//選択中のタグ取得
+	const String getCurrentTag()const
 	{
-		m_currentSelect = std::make_pair(name, index);
-	}
-	void update()
-	{
-
-		m_config.update((*this)[m_currentSelect.first][m_currentSelect.second]);
-
-		if (m_config.isSetting())
-			return;
-
-		auto it = this->getDictionary().find(m_currentSelect.first);
-		if (Input::KeyDown.clicked)
+		uint32 i = 0;
+		for (auto& elm : this->getKeys())
 		{
-			it++;
-			if (it != this->getDictionary().end())
+			if (m_currentSelect.first == i)
 			{
-				m_currentSelect.first = (*it).first;
+				return elm.first;
 			}
+			++i;
 		}
-		else if (Input::KeyUp.clicked)
+		return L"";
+	}
+	void select()
+	{
+
+		if (Input::KeyUp.clicked)
 		{
-			if (it != this->getDictionary().begin())
+			if (m_currentSelect.first > 0)
+				m_currentSelect.first--;
+		}
+		else if (Input::KeyDown.clicked)
+		{
+			if (m_currentSelect.first < this->getKeys().size() - 1)
 			{
-				m_currentSelect.first = (*--it).first;
+				m_currentSelect.first++;
 			}
+
 		}
 		if (Input::KeyLeft.clicked)
 		{
@@ -46,27 +46,46 @@ public:
 		}
 		else if (Input::KeyRight.clicked)
 		{
-			if (m_currentSelect.second < this->getDictionary().at(m_currentSelect.first).size() - 1)
+			if (m_currentSelect.second < this->getKeys().at(this->getCurrentTag()).size() - 1)
 			{
 				m_currentSelect.second++;
 			}
 		}
+
+	}
+public:
+	SampleKeyConfig(const FilePath& path) :
+		KeyManager(path),
+		m_currentSelect(0, 0)
+	{}
+
+
+	void update()
+	{
+		m_config.update((*this)[this->getCurrentTag()][m_currentSelect.second]);
+
+		if (m_config.isSetting())
+			return;
+
+		//選択中の場所変更
+		this->select();
+
 	}
 	void draw()const
 	{
-		int i = 0;
-		for (auto&&elm : this->getDictionary())
+		uint32 i = 0;
+		for (auto&&elm : this->getKeys())
 		{
 			m_font(elm.first).drawCenter(100, 100 + i * 50);
 
 			for (uint32 j = 0; j < elm.second.size(); ++j)
 			{
-				auto&& key = elm.second[j];
+				auto& key = elm.second[j];
 
 				//色取得
 				Color color = Palette::White;
 
-				bool isSelected = elm.first == m_currentSelect.first&&j == m_currentSelect.second;
+				bool isSelected = i == m_currentSelect.first&&j == m_currentSelect.second;
 				if (isSelected)
 				{
 					color = Palette::Red;
@@ -88,34 +107,14 @@ void Main()
 {
 	SampleKeyConfig keyConfig(L"keyconfig.csv");
 
-	keyConfig.add(L"Jump", { Input::KeyZ, Key(), Key() });
-	keyConfig.add(L"Attack", { Input::KeyX, Key(), Key() });
-	keyConfig.init(L"Jump", 0);
+	keyConfig.add(L"Jump", { Input::KeyZ, Input::KeyUp, Key() });
+	keyConfig.add(L"Attack", { Input::KeyX, Input::KeySpace, Key() });
 
-	using namespace s3dkc;
-
-	//KeyConfig config;
-
-	//Key key;
 
 	while (System::Update())
 	{
-		//ClearPrint();
 
-		//auto state = config.update(key);
-
-		//if (state == KeyConfig::State::Normal ||
-		//	state == KeyConfig::State::IsSetting&&System::FrameCount() / 10 % 2 == 0)
-		//	PutText(s3dkc::GetKeyName(key)).at(Window::Center());
-
-		//if (state == KeyConfig::State::Delete)
-		//{
-		//	Println(L"キーを消去しました");
-		//}
-		//if (state == KeyConfig::State::OnChange)
-		//{
-		//	Println(L"キーを変更しました");
-		//}
+		keyConfig.update();
 
 		if (keyConfig[L"Jump"].clicked)
 		{
@@ -125,11 +124,12 @@ void Main()
 		{
 			Println(L"Attack");
 		}
-		keyConfig.update();
+
+
 		keyConfig.draw();
 
 
 	}
 
-	keyConfig.save(L"keyconfig.csv");
+	keyConfig.save();
 }
